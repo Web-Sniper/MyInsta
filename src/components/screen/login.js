@@ -1,8 +1,10 @@
-import React,{useState} from 'react'
+import React,{useState,useContext} from 'react'
 import {Link,useHistory} from 'react-router-dom'
 import M from 'materialize-css'
+import {userContext} from '../../App'
 
 const Login = ()=>{
+    const {state, dispatch} = useContext(userContext)
     const [email,setEmail] = useState("")
     const [password, setPassword] = useState("")
     const history = useHistory()
@@ -24,6 +26,7 @@ const Login = ()=>{
             }
             localStorage.setItem("jwt",data.token)
             localStorage.setItem("user",JSON.stringify(data.user))
+            dispatch({type:"USER",payload:data.user})
             M.toast({html: "Signedin Sucessfully", classes:"#00897b teal darken-1"})
             history.push("/")
         })
@@ -33,7 +36,7 @@ const Login = ()=>{
     }
     return (
         <div className="mycard">
-            <div className="card auth-card">
+            <div className="card auth-card ">
                 <h2>MyInsta</h2>
                 <input type="text" placeholder="Email" 
                 value = {email}
@@ -43,7 +46,7 @@ const Login = ()=>{
                 value = {password}
                 onChange = {(e)=>setPassword(e.target.value)}
                 />
-                <button className="btn waves-effect waves-light" onClick = {()=>Login()}>
+                <button className="btn waves-effect waves-light"  onClick = {()=>Login()}>
                     Login
                 </button>
                 <h6>

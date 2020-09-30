@@ -9,9 +9,6 @@ const Signup = ()=>{
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
     const PostData = ()=>{
-        if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
-            return M.toast({html: "invalid email", classes:"#e53935 red darken-1"})
-        }
         fetch("/signup",{
             method : "post",
             headers : {

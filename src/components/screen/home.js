@@ -1,52 +1,114 @@
-import React from 'react'
+import React, { useState, useEffect,useContext } from 'react'
+import {userContext} from '../../App'
 
 
-const Home = ()=>{
+const Home = () => {
+    const [data, setData] = useState([])
+    const {state, dispatch} = useContext(userContext)
+    useEffect(() => {
+        if(state){
+        fetch('/allpost', {
+            method: "get",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            }
+        }).then(res => res.json())
+            .then(data => {
+                setData(data.posts)
+            })
+    }}, [state])
+
+    const likePost = (id)=>{
+        fetch('/like',{
+            method : "put",
+            headers :{
+                "Content-Type" : "application/json",
+                "Authorization" : "Bearer " + localStorage.getItem("jwt")
+            },
+            body:JSON.stringify({
+                postId:id
+            })
+        }).then(res=>res.json())
+        .then(result=>{
+            const newData = data.map(item=>{
+                if(item._id==result._id){
+                    return result
+                }else{
+                    return item
+                }
+            })
+            setData(newData)
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+    }
+
+    const unlikePost = (id)=>{
+        fetch('/unlike',{
+            method : "put",
+            headers :{
+                "Content-Type" : "application/json",
+                "Authorization" : "Bearer " + localStorage.getItem("jwt")
+            },
+            body:JSON.stringify({
+                postId:id
+            })
+        }).then(res=>res.json())
+        .then(result=>{
+            //console.log(result)
+            const newData = data.map(item=>{
+                if(item._id==result._id){
+                    return result
+                }else{
+                    return item
+                }
+            })
+            setData(newData)
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+    }
     return (
         <div className="home">
-            <div className="card home-card">
-                <h5 style={{padding:"5px"}}>
-                    Ramesh
-                </h5>
-                <div className="card-image">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"/>
-                </div>
-                <div className="card-content">
-                    <i className="material-icons" style={{color:"red"}}>favorite</i>
-                    <h5>Title</h5>
-                    <p>In awesome mood.....</p>
-                    <input type="text" placeholder="add a comment" />
-                </div>
-            </div>
-            <div className="card home-card">
-                <h5 style={{padding:"5px"}}>
-                    Ramesh
-                </h5>
-                <div className="card-image">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"/>
-                </div>
-                <div className="card-content">
-                    <i className="material-icons" style={{color:"red"}}>favorite</i>
-                    <h5>Title</h5>
-                    <p>In awesome mood.....</p>
-                    <input type="text" placeholder="add a comment" />
-                </div>
-            </div>
-            <div className="card home-card">
-                <h5 style={{padding:"5px"}}>
-                    Ramesh
-                </h5>
-                <div className="card-image">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80"/>
-                </div>
-                <div className="card-content">
-                    <i className="material-icons" style={{color:"red"}}>favorite</i>
-                    <h5>Title</h5>
-                    <p>In awesome mood.....</p>
-                    <input type="text" placeholder="add a comment" />
-                </div>
-            </div>
+            {
+                data.map(item => {
+                    return (
+                        <div className="card home-card" key={item._id}>
+                            <h5 style={{ padding: "5px" }}>
+                                {item.postedBy.name}
+                            </h5>
+                            <div className="card-image">
+                                <img src={item.photo} />
+                            </div>
+                            <div className="card-content">
+                                <i className="material-icons" style={{ color: "red" }}>favorite</i>
+                                {
+                                    item.likes.includes(state._id)?
+                                <i className="material-icons"
+                                onClick={()=>{unlikePost(item._id)}}
+                                >thumb_down</i>
+                                :
+                                <i className="material-icons"
+                                onClick={()=>{likePost(item._id)}}
+                                >thumb_up</i>
+                                }
+                                
+                                
+                                <h6>{item.likes.length} likes</h6>
+                                <h5>{item.title}</h5>
+                                <p>{item.content}</p>
+                                <input type="text" placeholder="add a comment" />
+                            </div>
+                        </div>
+                    )
+
+                })
+            }
+
         </div>
+
     )
 }
 

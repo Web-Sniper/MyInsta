@@ -1,4 +1,4 @@
-import React,{useState} from "react"
+import React,{useState,useEffect} from "react"
 import {useHistory} from 'react-router-dom'
 import M from 'materialize-css'
 
@@ -8,6 +8,33 @@ const Createpost = ()=>{
     const [content,setContent] = useState("")
     const [image,setImage] = useState("")
     const [url,setUrl] = useState("")
+    useEffect(()=>{
+        if(url){
+            fetch("/createpost",{
+                method : "post",
+                headers :{
+                    "Content-Type" : "application/json",
+                    "Authorization" : "Bearer "+localStorage.getItem("jwt")
+                },
+                body:JSON.stringify({
+                    title,
+                    content,
+                    photo:url
+                    
+                })
+                }).then(res=>res.json())
+                .then(data=>{
+                    if(data.error){
+                        console.log("err")
+                        return
+                        //return M.toast({html: data.error, classes:"#e53935 red darken-1"})
+                    }
+                    M.toast({html: "Posted successfully", classes:"#00897b teal darken-1"})
+                    history.push("/")
+            })
+        }
+        
+    },[url,title,content,history])
 
     const postDetails = ()=>{
         
@@ -22,28 +49,10 @@ const Createpost = ()=>{
         .then(res=>res.json())
         .then(data=>{
             setUrl(data.url)
-        }).then()
-        .catch(err=>console.log(err))
-        fetch("/createpost",{
-            method : "post",
-            headers :{
-                "Content-Type" : "application/json",
-                "Authorization" : "Bearer "+localStorage.getItem("jwt")
-            },
-            body:JSON.stringify({
-                title,
-                content,
-                photo:url
-                
-            })
-            }).then(res=>res.json())
-            .then(data=>{
-                if(data.error){
-                    return M.toast({html: data.error, classes:"#e53935 red darken-1"})
-                }
-                M.toast({html: "Posted successfully", classes:"#00897b teal darken-1"})
-                history.push("/")
         })
+        .catch(err=>console.log(err))
+        
+        
     }
 
     return(

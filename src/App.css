@@ -4,7 +4,7 @@ a{
 }
 .brand-logo,h2{
   font-family: 'Pacifico', cursive;
-  font-size: 38px;
+  font-size: 28px !important;
   margin : 5px;
 }
 .mycard{
@@ -41,6 +41,7 @@ a{
 }
 #toast-container{
   top:30px;
-  right:300px;
-  left: auto
+  right:100px;
+  left: auto;
+  min-width: 150px;;
 }

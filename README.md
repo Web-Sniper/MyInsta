@@ -4,6 +4,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `node app`
+
+Starts the node server to execute the server-side-script.
+
 ### `npm start`
 
 Runs the app in the development mode.<br />
